@@ -7,26 +7,26 @@ import Cocoa
 //
 // Section 2.1: "initial" embedding based on algebraic data types
 //
-indirect enum Exp {
+indirect enum Exp { //makes it a recursive enum, like activating Haskell mode
     case Lit(Int)
     case Neg(Exp)
     case Add(Exp, Exp)
 }
 
-let ti1: Exp = .Add(.Lit(8), .Neg(.Add (.Lit(1), .Lit(2))))
+let ti1: Exp = .Add(.Lit(8), .Neg(.Add (.Lit(1), .Lit(2)))) //8 + -(1 + 2)
 
 func eval(_ e: Exp) -> Int {
     switch e {
-    case let .Lit(n): return n
-    case let .Neg(e): return -eval(e)
+    case let .Lit(n): return n //to return a literal, unwrap the n
+    case let .Neg(e): return -eval(e) //negate the evaluation of e
     case let .Add(e1, e2): return eval(e1) + eval(e2)
     }
 }
 
 let result1 = eval(ti1)
 
-// pretty printing using initial embedding
-func view(_ e: Exp) -> String {
+// pretty printing using initial embedding -- embedding it as an AST
+func view(_ e: Exp) -> String { //Converts an expr to string, like pretty-printing it
     switch e {
     case let .Lit(n): return "\(n)"
     case let .Neg(e): return "(- \(view(e)))"
@@ -296,3 +296,5 @@ class ExpPushNegSym<E: ExpSym>: ExpSym {
 }
 
 tf1(ExpPushNegSym(StringExpSym()))(.Pos)
+
+//TODO: implement rest of paper with Ben

@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		1ADB4A341E8C88EC000F8896 /* TaglessFinalInterpreter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TaglessFinalInterpreter; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ADB4A371E8C88EC000F8896 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		1ADB4A3E1E8C8C09000F8896 /* TaglessFinalInterpreter.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = TaglessFinalInterpreter.playground; path = TaglessFinalInterpreter/TaglessFinalInterpreter.playground; sourceTree = "<group>"; };
+		1ADB4A3E1E8C8C09000F8896 /* TaglessFinalInterpreter.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = TaglessFinalInterpreter.playground; path = TaglessFinalInterpreter/TaglessFinalInterpreter.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -257,6 +257,7 @@
 				1ADB4A3D1E8C88EC000F8896 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

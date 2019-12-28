@@ -1,0 +1,1335 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf500
+{\fonttbl\f0\fnil\fcharset0 Menlo-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fnil\fcharset0 Menlo-Regular;
+}
+{\colortbl;\red255\green255\blue255;\red255\green255\blue255;\red31\green31\blue36;\red65\green182\blue69;
+}
+{\*\expandedcolortbl;;\csgenericrgb\c100000\c100000\c100000;\csgenericrgb\c12157\c12157\c14118;\csgenericrgb\c25500\c71400\c27000;
+}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab642
+\pard\tx642\pardeftab642\pardirnatural\partightenfactor0
+
+\f0\b\fs26 \cf2 \cb3 val: 5
+\f1\b0\fs24 \cf0 \
+
+\f0\b\fs26 \cf2 str: (8 + (- (1 + 2)))
+\f1\b0\fs24 \cf0 \
+
+\f0\b\fs26 \cf2 tree: Node 'Add' [Node 'Lit' [Leaf '8'], Node 'Neg' [Node 'Add' [Node 'Lit' [Leaf '1'], Node 'Lit' [Leaf '2']]]]
+\f1\b0\fs24 \cf0 \
+
+\f0\b\fs26 \cf2 val: 224
+\f1\b0\fs24 \cf0 \
+
+\f0\b\fs26 \cf2 str: ((42 + (- 10)) * 7)
+\f1\b0\fs24 \cf0 \
+
+\f0\b\fs26 \cf2 tree: Node 'Mul' [Node 'Add' [Node 'Lit' [Leaf '42'], Node 'Neg' [Node 'Lit' [Leaf '10']]], Node 'Lit' [Leaf '7']]
+\f1\b0\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf2
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (Int) $R0 = 5
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tfmi1
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (Int) $R2 = 6
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: <EXPR>:3:1: error: use of unresolved identifier 'tfmi2'
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 tfmi2
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ^~~~~
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tfmi2
+\f1\b0\fs24 \cf0 \
+\
+
+\f2\fs26 \cf2 tfmi2
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ^~~~~
+\f1\fs24 \cf0 \
+\
+
+\f2\fs26 \cf2 error: <EXPR>:3:1: error: use of unresolved identifier 'tfmi2'
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 tfmi2
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ^~~~~
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tfms1
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (String) $R4 = "(8 + (- (1 * 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1_tree.description
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (String) $R6 = "Node \\'Add\\' [Node \\'Lit\\' [Leaf \\'8\\'], Node \\'Neg\\' [Node \\'Add\\' [Node \\'Lit\\' [Leaf \\'1\\'], Node \\'Lit\\' [Leaf \\'2\\']]]]"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: <EXPR>:3:1: error: generic parameter 'E' could not be inferred
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 tf1
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ^
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1()
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: <EXPR>:3:1: error: cannot invoke 'tf1' with no arguments
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 tf1()
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ^
+\f1\fs24 \cf0 \
+\
+
+\f2\fs26 \cf2 <EXPR>:3:1: note: expected an argument list of type '(E)'
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 tf1()
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ^
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1_eval
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (Int?) $R8 = 5
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1(IntExprSm())
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.IntExpSym.repr) $R10 = 5
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Fix-it applied, fixed expression was: 
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     tf1(IntExpSym())
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1(TreeSym())
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.TreeSym.repr) $R12 = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Leaf = "8"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Neg"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "1"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "2"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1_tree
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.Tree) $R14 = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Leaf = "8"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Neg"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "1"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "2"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr fromTree(tf1_tree)(StringExpSym())
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.StringExpSym.repr?) $R16 = "(8 + (- (1 + 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr fromTree(tf1_tree)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: <EXPR>:3:1: error: 'fromTree' is inaccessible due to 'internal' protection level
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 fromTree(tf1_tree)
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ^
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr fromTree(tf1_tree)(IntExpSym())
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.IntExpSym.repr?) $R18 = 5
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr (val, (str, tree))
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (Int, (String, TaglessFinalInterpreter.Tree)) $R20 = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   0 = 224
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   1 = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = "\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{1\}\\0\\0\\0\\0\\0\\0"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         0 = "0\\u\{a9\}U\\0\\u\{1\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\0\\0\\0\\0\\320a2\\u\{1\}\\u\{1\}\\0\\0\\u\{80\}\\u\{4\}\\0\\0\\0\\0\\0\\0\\0\\340\\250U\\0\\u\{1\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\0\\0\\0\\0\\360a2\\u\{1\}\\0\\0\\0\\u\{10\}b2\\u\{1\}\\u\{1\}\\0\\0\\0\\u\{8\}\\u\{a9\}U\\0\\u\{1\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0ental_ma\\u\{8\}\\u\{a9\}U\\0\\u\{1\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0ZTUM\\0\\0\\0\\0\\0\\0\\0\\0\\u\{a0\} \\0\\0\\0\\0\\0\\0ZTUM\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\377\\377\\377\\377\\377\\377\\377\\377\uc0\u989 \\315\\376\\376\\377\\377\\377ZTUMZTUMDNOC\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{80\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0)\\u\{99\}f>\\377\\u\{7f\}\\0\\0\\3656\\306j\\377\\u\{7f\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\u\{a0\}b2\\u\{1\}\\u\{1\}\\0\\0\\0\\u\{80\}\\u\{a9\}U\\0\\u\{1\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\343Lit\\0\\0\\0\\0\\0\\u\{a0\}d2\\u\{1\}\\u\{1\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\u\{1\}\\0\\u\{3\}\\0_TtGCs23_ContiguousArrayStorageSS_\\0\\0\\0\\0\\0\\0\\u\{f\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{8\}\\u\{a0\}\\a\\0\\0\\0\\u\{a0\}\\u\{14\}Z\\0\\u\{1\}\\0\\0\\0\\u\{98\}\\u\{f\}Z\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{88\}\\u\{14\}Z\\0\\u\{1\}\\0\\0\\0X^]\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{8\}\\u\{80\}\\0\\0\\0\\0X\\u\{19\}Z\\0\\u\{1\}\\0\\0\\0\\350Z\\0\\u\{1\}\\0\\0\\0\\u\{10\}\\u\{19\}Z\\0\\u\{1\}\\0\\0\\0\\u\{88\}\\u\{14\}Z\\0\\u\{1\}\\0\\0\\0\\320]]\\0\\u\{1\}\\0\\0\\0\\u\{80\}\\u\{ae\}a\\u\{9b\}\\377\\u\{7f\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0)\\u\{99\}f>\\377\\u\{7f\}\\0\\0\\u\{b0\}mN\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\320c2\\u\{1\}\\u\{1\}\\0\\0\\0\\0\\0\\u\{8\}\\u\{80\}\\0\\0\\0\\0`8]\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{b0\}BZ\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{8\}\\u\{80\}\\a\\0\\0\\0\\u\{a8\}8]\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\u\{98\}\\u\{95\}Z\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\300:]\\0\\u\{1\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\0\\0\\0\\0\\u\{1\}\\0\\0\\0\\0\\0\\0\\0\\u\{2\}\\0\\0\\0\\0\\0\\0\\0\\320d2\\u\{1\}\\u\{1\}\\0\\0\\0mage not\\u\{a8\}\\u\{a9\}U\\0\\u\{1\}\\0\\0\\0\\u\{2\}\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3418
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         1 = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           _buffer = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             _storage = (rawValue = 0x000000010055a8e0 )
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1_tree.self
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.Tree) $R22 = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Leaf = "8"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Neg"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "1"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "2"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1_tree
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.Tree) $R24 = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Leaf = "8"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Neg"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "1"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "2"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tmtree
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.Tree) $R26 = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = "Mul"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Add"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 2 values \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Leaf = "42"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 0 = "Neg"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   [0] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                           Leaf = "10"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2                 \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       [1] = Node \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Node = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = "Lit"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = 1 value \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             [0] = Leaf \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2               Leaf = "7"
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr view(ti1_norm)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (String) $R28 = "(8 + ((- 1) + (- 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr ti1_norm
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.Exp) $R30 = Add \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Add = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       Lit = 8
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = Add \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       Add = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         0 = Neg \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           Neg = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             Lit = 1
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         1 = Neg \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           Neg = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             Lit = 2
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr ti1
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.Exp) $R32 = Add \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Add = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       Lit = 8
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = Neg \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       Neg = Add \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         Add = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           0 = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             Lit = 1
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           1 = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             Lit = 2
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr view(ti1_norm)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (String) $R34 = "(8 + ((- 1) + (- 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr view(ti1)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (String) $R36 = "(8 + (- (1 + 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 eval(ti1_norm)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: 'eval' is not a valid command.
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: Unrecognized command 'eval(ti1_norm)'.
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr eval(ti1_norm)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (Int) $R38 = 5
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr ti1_norm
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.Exp) $R40 = Add \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   Add = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     0 = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       Lit = 8
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     1 = Add \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       Add = \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         0 = Neg \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           Neg = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             Lit = 1
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         1 = Neg \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           Neg = Lit \{
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2             Lit = 2
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2           \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2         \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2       \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2     \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2   \}
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 \}
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr view(ti1_norm)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (String) $R42 = "(8 + ((- 1) + (- 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr view(ti1)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (String) $R44 = "(8 + (- (1 + 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr view(tf1)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: <EXPR>:3:6: error: cannot convert value of type '(_) -> _.repr' to expected argument type 'Exp'
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 view(tf1)
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2      ^~~
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: <EXPR>:3:1: error: generic parameter 'E' could not be inferred
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 tf1
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ^
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1(ExpPushNegSym(StringExpSym()))(.Pos)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.StringExpSym.repr) $R46 = "(8 + ((- 1) + (- 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1(ExpPushNegSym(IntExpSym()))(.Pos)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.IntExpSym.repr) $R48 = 5
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1((IntExpSym()))(.Pos)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: <EXPR>:3:19: error: cannot call value of non-function type 'IntExpSym.repr' (aka 'Int')
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 tf1((IntExpSym()))(.Pos)
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ~~~~~~~~~~~~~~~~~~^
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1((IntExpSym()))
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.IntExpSym.repr) $R50 = 5
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1((IntExpSym()))(.Neg)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: <EXPR>:3:19: error: cannot call value of non-function type 'IntExpSym.repr' (aka 'Int')
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 tf1((IntExpSym()))(.Neg)
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 ~~~~~~~~~~~~~~~~~~^
+\f1\fs24 \cf0 \
+\
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1(ExpPushNegSym(IntExpSym()))(.Neg)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.IntExpSym.repr) $R52 = -5
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1(ExpPushNegSym(IntExpSym()))(.Pos)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.IntExpSym.repr) $R54 = 5
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1(ExpPushNegSym(StringExpSym()))(.Neg)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.StringExpSym.repr) $R56 = "((- 8) + (1 + 2))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 expr tf1(ExpPushNegSym(StringExpSym()))(.Pos)
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 (TaglessFinalInterpreter.StringExpSym.repr) $R58 = "(8 + ((- 1) + (- 2)))"
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) \cf2 omg it optimized it out
+\f1\b0\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: 'omg' is not a valid command.
+\f1\fs24 \cf0 \
+
+\f2\fs26 \cf2 error: Unrecognized command 'omg'.
+\f1\fs24 \cf0 \
+
+\f0\b\fs26 \cf4 (lldb) }
