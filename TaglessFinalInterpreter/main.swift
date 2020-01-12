@@ -13,14 +13,23 @@ import Foundation
 import Cocoa
 
 //  Examples from this paper: http://okmij.org/ftp/tagless-final/course/lecture.pdf
+/*
+ prettry print, eval, parser
+ converting to and from representations.
+ 
+ you have AST but sometimes it makes no sense to do an if statement with a number. syntactically, is ok, but needs to match semantic representation - impossible to encode malformed + ill-typed.
+ */
+ 
 
 //
-// Section 2.1: "initial" embedding based on algebraic data types
+// Section 2.1: "initial" embedding based on algebraic data types (this is regular "embedding" (aka representation - how to represent it / express the representation of this)). [VS FINAL]
 //
 indirect enum Exp { //makes it a recursive enum, like activating Haskell mode
     case Lit(Int)
     case Neg(Exp)
     case Add(Exp, Exp)
+    //To add Mul: we would need to add this and for all the eval() functions etc. and it's bad here: [this is why we need TAGLESS FINAL [*** instead!]]
+    //case Mul(Exp, Exp)
 }
 
 let ti1: Exp = .Add(.Lit(8), .Neg(.Add (.Lit(1), .Lit(2)))) //8 + -(1 + 2)
@@ -50,7 +59,7 @@ let str1 = view(ti1)
 protocol ExpSym { //this is like a typeclass (concept)
     associatedtype repr //this is like a template parameter
     func lit(_ n: Int) -> repr
-    func neg(_ e: repr) -> repr
+    func neg(_ e: repr) -> repr //repr can be an int OR STRING OR ANYTHING. it's generic.
     func add(_ e1: repr, _ e2: repr) -> repr
 }
 
@@ -71,7 +80,7 @@ class StringExpSym: ExpSym {
 
 func tf1<E: ExpSym>(_ v: E) -> E.repr {
     return v.add(v.lit(8), v.neg(v.add(v.lit(1), v.lit(2))))
-}
+} //the type depends on how we interpret it! -- literally abstract syntax.
 
 let tf2: Int = tf1(IntExpSym())
 let ts2: String = tf1(StringExpSym())
@@ -94,11 +103,12 @@ let ts2: String = tf1(StringExpSym())
 //}
 
 // Instead we create a new protocol to add mul
-protocol MulSym: ExpSym {
+protocol MulSym: ExpSym { //[***]
+//side note: in haskell we dont have to have mulsym inherit from expsym.
     func mul(_ e1: repr, _ e2: repr) -> repr
 }
 
-class IntMulSym: IntExpSym, MulSym {
+class IntMulSym: IntExpSym, MulSym { //[***] didn't need to recompile old code! and no dynamic dispatch either.
     func mul(_ e1: Int, _ e2: Int) -> Int {
         return e1 * e2
     }
@@ -110,6 +120,7 @@ class StringMulSym: StringExpSym, MulSym {
     }
 }
 
+//Tagless Final Multiplication (Example) 1.
 func tfm1<E: MulSym>(_ v: E) -> E.repr {
     return v.add(v.lit(8), v.neg(v.mul(v.lit(1), v.lit(2))))
 }
