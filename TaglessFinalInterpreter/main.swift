@@ -56,6 +56,7 @@ func view(_ e: Exp) -> String { //Converts an expr to string, like pretty-printi
 let str1 = view(ti1)
 
 //This is a final embedding: what if we consider Lit not as ((Int) -> TaglessFinalInterpreter.Exp) but as Int to any representation (repr) and not just Exp. It's a generic return type.
+//This means ExpressionSemantics
 protocol ExpSym { //this is like a typeclass (concept)
     associatedtype repr //this is like a template parameter
     func lit(_ n: Int) -> repr
@@ -63,6 +64,7 @@ protocol ExpSym { //this is like a typeclass (concept)
     func add(_ e1: repr, _ e2: repr) -> repr
 }
 
+//In the domain of ints, it makes sense that add actually adds them, and so on.
 class IntExpSym: ExpSym {
     typealias repr = Int //we now say what the repr is, as an Int
     func lit(_ n: Int) -> repr { return n }
@@ -103,8 +105,9 @@ let ts2: String = tf1(StringExpSym())
 //}
 
 // Instead we create a new protocol to add mul
-protocol MulSym: ExpSym { //[***]
+protocol MulSym { //[***]
 //side note: in haskell we dont have to have mulsym inherit from expsym.
+    associatedtype repr
     func mul(_ e1: repr, _ e2: repr) -> repr
 }
 
@@ -121,11 +124,31 @@ class StringMulSym: StringExpSym, MulSym {
 }
 
 //Tagless Final Multiplication (Example) 1.
-func tfm1<E: MulSym>(_ v: E) -> E.repr {
+//We have the same data type but its value depends on how we view it!
+func tfm1<E: MulSym & ExpSym>(_ v: E) -> E.repr {
     return v.add(v.lit(8), v.neg(v.mul(v.lit(1), v.lit(2))))
 }
+/*
+ (lldb) expr tfms1
+ (String) $R4 = "(8 + (- (1 * 2)))"
+ (lldb) expr tfm1
+ error: <EXPR>:3:1: error: generic parameter 'E' could not be inferred
+ tfm1
+ ^
+ 
+ (lldb) type tfm1
+ invalid command 'type tfm1'.
+ (lldb) expr type(of: tfm1)
+ error: <EXPR>:3:1: error: expression type '(_) -> _' is ambiguous without more context
+ type(of: tfm1)
+ ^~~~
+ 
+ (lldb) expr type(of: tfmi1)
+ (Int.Type) $R6 = Int
+ (lldb)
+ */
 
-func tfm2<E: MulSym>(_ v: E) -> E.repr {
+func tfm2<E: MulSym & ExpSym>(_ v: E) -> E.repr {
     return v.mul(v.lit(7), tf1(v))
 }
 
@@ -136,11 +159,24 @@ let tfms1 = tfm1(StringMulSym()) //note: code re-use successful! "this scales in
 // Section 2.3: de-serialization
 //
 
+//This is one way to represent an AST.
 // Oddly, for a paper that is about the final embedding, the author chose to describe Tree as an initial embedding.
 indirect enum Tree {
     case Leaf(String)
     case Node(String, [Tree])
 }
+
+//MARK: Exercise: tagless final tree
+
+//This is one way to represent an AST.
+protocol TreeF {
+    associatedtype repr
+    func leaf(_ e: String) -> repr
+    func node(_ s: String, _ l: [repr]) -> repr
+    //                              ^-- repr says even the trees in the list are generic. we dont say what the type is, just repr.
+}
+
+//MARK: continued
 
 extension Tree: CustomStringConvertible { //This is a "Show" typeclass from Haskell
     var description: String {
@@ -152,6 +188,55 @@ extension Tree: CustomStringConvertible { //This is a "Show" typeclass from Hask
         }
     }
 }
+
+//MARK: Exercise: tagless final tree
+
+//This is how to evaluate a tree in the domain of strings.
+//(We could even represent trees as JSON...)
+class StringTreeF: TreeF {
+    //We're saying that our tagless final tree can be interpreted as a string.
+    typealias repr = String
+    func leaf(_ e: String) -> repr {
+        return "Leaf '\(e)'"
+    }
+    
+    func node(_ s: String, _ l: [repr]) -> repr {
+        let subtrees = l.joined(separator: ", ")
+        return "Node '\(s)' [\(subtrees)]"
+    }
+}
+
+//Exercise: interpret as something else
+//Interpret generic trees in the domain of concrete trees.
+//Purpose: to show that our representation can be made concrete again.
+class TreeTreeF: TreeF {
+    //We're saying that our tagless final tree can be interpreted as a string.
+    typealias repr = Tree
+    
+    func leaf(_ e: String) -> repr {
+        return .Leaf(e)
+    }
+    
+    func node(_ s: String, _ l: [repr]) -> repr {
+        return .Node(s, l)
+    }
+}
+
+//Exercise: make a reverse string
+class ReverseStringTreeF: TreeF {
+    //We're saying that our tagless final tree can be interpreted as a string.
+    typealias repr = String
+    func leaf(_ e: String) -> repr {
+        return "Leaf '\(String(e.reversed()))'"
+    }
+    
+    func node(_ s: String, _ l: [repr]) -> repr {
+        let subtrees = l.joined(separator: ", ")
+        return "Node '\(String(s.reversed()))' [\(subtrees)]"
+    }
+}
+
+//MARK: continued
 
 class TreeSym: ExpSym {
     typealias repr = Tree
@@ -169,8 +254,39 @@ class TreeSym: ExpSym {
     }
 }
 
-let tf1_tree = tf1(TreeSym())
+//MARK: Exercise: tagless final tree
+
+struct TreeSymF<E: TreeF>: ExpSym {
+    typealias repr = E.repr
+    let v: E //limitation of swift..?
+
+    func lit(_ n: Int) -> E.repr {
+        return v.node("Lit", [v.leaf(String(n))])
+    }
+    
+    func neg(_ e: E.repr) -> E.repr {
+        return v.node("Neg", [e])
+    }
+    
+    func add(_ e1: E.repr, _ e2: E.repr) -> E.repr {
+        return v.node("Add", [e1, e2])
+    }
+}
+
+//MARK: continued
+
+let tf1_tree = tf1(TreeSym()) //`func tf1<E: ExpSym>(_ v: E)` takes some generic structure and we interpret it in the domain[<the semantic domain. denotational semantics: denotation(translation from sign to meaning) of an expression depends on the domain you are talking about it in: in a string, 5 has the meaning of part of the string; in an integer literal it is an integer.] of trees now.   //NOTE: application example: VECS entity component system Position.x changes meaning in a method call; otherwise it means a type.
+//MARK: Exercise: tagless final tree
+let tf1_treeF = tf1(TreeSymF(v: StringTreeF()))
+let tf1_treeTreeF = tf1(TreeSymF(v: TreeTreeF()))
+let tf1_reversedStringTreeF = tf1(TreeSymF(v: ReverseStringTreeF()))
+tf1_treeTreeF.description
+tf1_reversedStringTreeF.description
+//MARK: continued
 tf1_tree.description //serialization!
+//MARK: Exercise: tagless final tree
+tf1_treeF.description
+//MARK: continued
 
 //Deserialization:
 func fromTree<E: ExpSym>(_ tree: Tree) -> (_ e: E) -> E.repr? { //"?": Yay, Nothing or Just
@@ -181,7 +297,7 @@ func fromTree<E: ExpSym>(_ tree: Tree) -> (_ e: E) -> E.repr? { //"?": Yay, Noth
                 return e.lit(n) //generic representation! so good. (because returns E.rep -- we are converting from a tree to the generic representation.)
             }
             return nil
-        case let .Node("Neg", subtree) where subtree.count == 1:
+        case let .Node("Neg", subtree) where subtree.count == 1: //In Haskell, it's easier with liftM, liftM2, etc. -- lifting a pure computation into the monad.
             if let subexpr = fromTree(subtree[0])(e) {
                 return e.neg(subexpr)
             }
@@ -252,7 +368,7 @@ class TreeMulSym: TreeSym, MulSym {
 }
 
 //how to deserialize a multiplication node. reuses how to deserialize a tree with "fromTree" recursive calls.
-func fromMulTree<E: MulSym>(_ tree: Tree) -> (_ e: E) -> E.repr? {
+func fromMulTree<E: MulSym & ExpSym>(_ tree: Tree) -> (_ e: E) -> E.repr? {
     return { e in
         if case let .Node("Mul", subtree) = tree, subtree.count == 2 {
             if let a = fromTree(subtree[0])(e), let b = fromTree(subtree[1])(e) {
@@ -263,23 +379,23 @@ func fromMulTree<E: MulSym>(_ tree: Tree) -> (_ e: E) -> E.repr? {
     }
 }
 
-class DuplicateMulSym<E1, E2>: DuplicateSym<E1,E2>, MulSym where E1: MulSym, E2: MulSym {
-    func mul(_ e1: (R1, R2), _ e2: (R1, R2)) -> (R1, R2) {
-        return (self.e1.mul(e1.0, e2.0), self.e2.mul(e1.1, e2.1))
-    }
-}
-
-func tm1<E: MulSym>(_ e: E) -> E.repr {
-    return e.mul(e.add(e.lit(42), e.neg(e.lit(10))), e.lit(7))
-}
-
-let tmtree = tm1(TreeMulSym()) //This is a way better way of basically extending with inheritance
-let multiMulSym = DuplicateMulSym(IntMulSym(), DuplicateMulSym(StringMulSym(), TreeMulSym()))
-if let (val, (str, tree)) = fromMulTree(tmtree)(multiMulSym) {
-    print("val: \(val)")
-    print("str: \(str)")
-    print("tree: \(tree)")
-}
+//class DuplicateMulSym<E1, E2>: DuplicateSym<E1,E2>, MulSym where E1: MulSym, E2: MulSym {
+//    func mul(_ e1: (R1, R2), _ e2: (R1, R2)) -> (R1, R2) {
+//        return (self.e1.mul(e1.0, e2.0), self.e2.mul(e1.1, e2.1))
+//    }
+//}
+//
+//func tm1<E: MulSym>(_ e: E) -> E.repr {
+//    return e.mul(e.add(e.lit(42), e.neg(e.lit(10))), e.lit(7))
+//}
+//
+//let tmtree = tm1(TreeMulSym()) //This is a way better way of basically extending with inheritance
+//let multiMulSym = DuplicateMulSym(IntMulSym(), DuplicateMulSym(StringMulSym(), TreeMulSym()))
+//if let (val, (str, tree)) = fromMulTree(tmtree)(multiMulSym) {
+//    print("val: \(val)")
+//    print("str: \(str)")
+//    print("tree: \(tree)")
+//}
 
 //
 // Section 2.4: Pattern Matching
@@ -288,7 +404,7 @@ if let (val, (str, tree)) = fromMulTree(tmtree)(multiMulSym) {
 //goal: compiler optimizations: turn ----5 into 5. so much easier to express with pattern matching than with imperative languages. This is like a parse tree / AST. Do a pass over the code where we optimize.
 
 // Using the Initial style
-func pushNeg(_ e: Exp) -> Exp {
+func pushNeg(_ e: Exp) -> Exp { //****not a fold because i give a structure and it returns a structure
     switch e {
     case .Lit(_): return e //no negation at all, no optimization.
     case .Neg(.Lit(_)): return e //we only optimize it when you have double negation, but here theres only one.
@@ -297,6 +413,10 @@ func pushNeg(_ e: Exp) -> Exp {
     case let .Add(e1, e2): return .Add(pushNeg(e1), pushNeg(e2))
     }
 }
+
+//****fold: means to collapse a structure; unfold is make like a number into a list with range(5) <-- is an unfold.
+//eval is a fold.
+//pretty printing is also a fold because it makes a string which is a single value.
 
 let ti1_norm = pushNeg(ti1)
 view(ti1_norm) //ti1, but "optimized"... not really though here, only two negations is actually useful because they would cancel.
@@ -336,7 +456,94 @@ class ExpPushNegSym<E: ExpSym>: ExpSym { //Do a transformation on a generic ExpS
     }
 }
 
-tf1(ExpPushNegSym(StringExpSym()))(.Pos)
+let pushed = tf1(ExpPushNegSym(StringExpSym()))(.Pos)
+
+/*
+ (lldb) expr tf1(StringExpSym())
+(TaglessFinalInterpreter.StringExpSym.repr) $R4 = "(8 + (- (1 + 2)))"
+(lldb) expr tf1(ExpPushNegSym(StringExpSym()))
+((TaglessFinalInterpreter.Ctx) -> TaglessFinalInterpreter.StringExpSym.repr) $R6 = 0x00000001011fb9a0
+(lldb) expr tf1(ExpPushNegSym(StringExpSym()))(.Pos)
+(TaglessFinalInterpreter.StringExpSym.repr) $R8 = "(8 + ((- 1) + (- 2)))"
+(lldb) expr tf1(ExpPushNegSym(TreeExpSym()))(.Pos)
+
+error: <EXPR>:3:19: error: use of unresolved identifier 'TreeExpSym'
+tf1(ExpPushNegSym(TreeExpSym()))(.Pos)
+                  ^~~~~~~~~~
+
+error: <EXPR>:3:19: error: use of unresolved identifier 'TreeExpSym'
+tf1(ExpPushNegSym(TreeExpSym()))(.Pos)
+                  ^~~~~~~~~~
+
+error: <EXPR>:3:19: error: use of unresolved identifier 'TreeExpSym'
+tf1(ExpPushNegSym(TreeExpSym()))(.Pos)
+                  ^~~~~~~~~~
+
+(lldb) expr tf1(ExpPushNegSym(TreeSym()))(.Pos)
+(TaglessFinalInterpreter.TreeSym.repr) $R10 = Node {
+  Node = {
+    0 = "Add"
+    1 = 2 values {
+      [0] = Node {
+        Node = {
+          0 = "Lit"
+          1 = 1 value {
+            [0] = Leaf {
+              Leaf = "8"
+            }
+          }
+        }
+      }
+      [1] = Node {
+        Node = {
+          0 = "Add"
+          1 = 2 values {
+            [0] = Node {
+              Node = {
+                0 = "Neg"
+                1 = 1 value {
+                  [0] = Node {
+                    Node = {
+                      0 = "Lit"
+                      1 = 1 value {
+                        [0] = Leaf {
+                          Leaf = "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            [1] = Node {
+              Node = {
+                0 = "Neg"
+                1 = 1 value {
+                  [0] = Node {
+                    Node = {
+                      0 = "Lit"
+                      1 = 1 value {
+                        [0] = Leaf {
+                          Leaf = "2"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+(lldb) expr tf1(ExpPushNegSym(TreeSym()))(.Pos).description
+(String) $R12 = "Node \'Add\' [Node \'Lit\' [Leaf \'8\'], Node \'Add\' [Node \'Neg\' [Node \'Lit\' [Leaf \'1\']], Node \'Neg\' [Node \'Lit\' [Leaf \'2\']]]]"
+(lldb) expr tf1(TreeSym()).description
+(String) $R14 = "Node \'Add\' [Node \'Lit\' [Leaf \'8\'], Node \'Neg\' [Node \'Add\' [Node \'Lit\' [Leaf \'1\'], Node \'Lit\' [Leaf \'2\']]]]"
+(lldb)
+ */
 
 //tagless final means we can use the type checker that we already have; whereas what's bad is that in the indirect enum Exp, We could have Apply but then do Lit 3 applied to 5 which is bad in our type system. We have it so actually you cant do this because the [IMPLEMENT LATER its in the paper.]
 //TODO: later, implement in C++ if you can..
@@ -344,3 +551,48 @@ tf1(ExpPushNegSym(StringExpSym()))(.Pos)
 
 //TODO: implement rest of paper with Ben
 let a = 1; //(no-op)
+
+
+
+//This was a fun excursion, but there's only one type: int. tagless final shines with more types. eval never crashes because only lit, neg, and add, so every possible combination of this is valid... but if we get more types like booleans then not every representation is valid.
+
+
+/*
+ template<typename Vector> void doSomething(Vector v) {
+    v.push_back(1);
+ }
+ */
+
+//We need higher kinded types.
+//protocol Semantics {
+//    associatedtype repr
+//    
+//    func int(_ i: Int) -> repr
+//    func add(_ i: Int) -> repr
+//    
+//    func z(
+//}
+
+func sum(_ array: [Int]) -> Int {
+    guard array.first != nil else { return 0 }
+    return array.reduce(0) { acc, a in acc + a}
+} //equivalent to `sum = foldr (+) 0` in Haskell
+
+let sumTest = sum(Array(1...5))
+
+/*
+ 
+ /// Combines the elements of this array using their `MonoidK` instance.
+    ///
+    /// - Parameter fga: Structure to be reduced.
+    /// - Returns: A value in the context providing the `MonoidK` instance.
+    func reduceK<G: MonoidK, A>() -> Kind<G, A> where Element == Kind<G, A> {
+        self.k().reduceK()
+    }
+ 
+ 
+ `reduce(_:)`:
+ A semigroup is basically that you can do associativity using parenethesis.
+ */
+
+var b = 2
