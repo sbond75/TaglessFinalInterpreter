@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Bow
 
 //: Playground - noun: a place where people can play
 
@@ -564,14 +565,15 @@ let a = 1; //(no-op)
  */
 
 //We need higher kinded types.
-//protocol Semantics {
-//    associatedtype repr
-//    
-//    func int(_ i: Int) -> repr
-//    func add(_ i: Int) -> repr
-//    
-//    func z(
-//}
+protocol Semantics {
+    associatedtype repr
+    
+    func int(_ i: Int) -> Kind<repr, Int>
+    func add(_ i1: Kind<repr, Int>, _ i2: Kind<repr, Int>) -> Kind<repr, Int>
+    
+    func lam<a, b>(_ i1: Kind<repr, a>, _ i2: Kind<repr, b>) -> Kind<repr, (a) -> b> // lam :: (repr a→repr b)→repr (a→b)
+    func app<a, b>(_ f1: Kind<repr, (a) -> b>, _ i2: Kind<repr, a>) -> Kind<repr, b> // app :: repr (a→b)→repr a→repr b
+}
 
 func sum(_ array: [Int]) -> Int {
     guard array.first != nil else { return 0 }
@@ -596,3 +598,20 @@ let sumTest = sum(Array(1...5))
  */
 
 var b = 2
+
+//ad-hoc poloymorphism is typeclasses/protocols
+
+//Either is a type-level function : type to type to type. takes two types and returns a type.
+//https://bow-swift.io/docs/fp-concepts/higher-kinded-types/ : F to abstract away the Either or Validated type. :
+/* this does NOT work in swift:
+ func divide<F: ErrorSuccessRepresentable>(x: Int, y: Int) -> F<DivideError, Int> {
+ guard y != 0 else { return .failure(.divisionByZero)
+ return .success(x / y)
+ }
+ */
+//WE CAN generalize the container such as std::vector so it doesnt just accept a type and waiting for type.
+
+//types have a type, and the type of a type is called its kind. Int has kind * which is a concrete type. Int, Bool, String, Vehicle, etc.
+//*->* is Array<Element>
+
+//TODO: what are higher rank types?

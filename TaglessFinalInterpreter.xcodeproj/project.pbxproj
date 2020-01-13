@@ -77,7 +77,6 @@
 				BFBB9C1D884EC6D1DE67EB2B /* Pods-TaglessFinalInterpreter.debug.xcconfig */,
 				BB1F37034B7819A9DBAFA39E /* Pods-TaglessFinalInterpreter.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -123,6 +122,7 @@
 					1ADB4A331E8C88EC000F8896 = {
 						CreatedOnToolsVersion = 8.3;
 						DevelopmentTeam = J3747XQ2DL;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -277,7 +277,8 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = J3747XQ2DL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -287,7 +288,8 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = J3747XQ2DL;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

@@ -6,6 +6,6 @@ target 'TaglessFinalInterpreter' do
   use_frameworks!
 
   # Pods for TaglessFinalInterpreter
-  #pod "Bow",                 "~>0.7.0"
+  pod "Bow",                 "~>0.5.0" #"~>0.7.0"
 
 end
