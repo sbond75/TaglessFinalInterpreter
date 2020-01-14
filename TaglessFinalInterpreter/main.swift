@@ -60,9 +60,9 @@ let str1 = view(ti1)
 //This means ExpressionSemantics
 protocol ExpSym { //this is like a typeclass (concept)
     associatedtype repr //this is like a template parameter
-    func lit(_ n: Int) -> repr
-    func neg(_ e: repr) -> repr //repr can be an int OR STRING OR ANYTHING. it's generic.
-    func add(_ e1: repr, _ e2: repr) -> repr
+    func lit(_: Int) -> repr
+    func neg(_: repr) -> repr //repr can be an int OR STRING OR ANYTHING. it's generic.
+    func add(_: repr, _: repr) -> repr
 }
 
 //In the domain of ints, it makes sense that add actually adds them, and so on.
@@ -565,15 +565,93 @@ let a = 1; //(no-op)
  */
 
 //We need higher kinded types.
-protocol Semantics {
+//Symantics, i.e., Semantics
+protocol Symantics {
     associatedtype repr
-    
+
     func int(_ i: Int) -> Kind<repr, Int>
     func add(_ i1: Kind<repr, Int>, _ i2: Kind<repr, Int>) -> Kind<repr, Int>
-    
-    func lam<a, b>(_ i1: Kind<repr, a>, _ i2: Kind<repr, b>) -> Kind<repr, (a) -> b> // lam :: (repr a→repr b)→repr (a→b)
-    func app<a, b>(_ f1: Kind<repr, (a) -> b>, _ i2: Kind<repr, a>) -> Kind<repr, b> // app :: repr (a→b)→repr a→repr b
+    // lam :: (repr a→repr b)→repr (a→b)
+    func lam<a, b>(_ i1: (Kind<repr, a>) -> Kind<repr, b>) -> Kind<repr, (a) -> b>
+    // app :: repr (a→b)→repr a→repr b
+    func app<a, b>(_ f1: Kind<repr, (a) -> b>, _ i2: Kind<repr, a>) -> (Kind<repr, a>) -> Kind<repr, b>
 }
+
+func th1<E: Symantics>(_ v: E) -> Kind<E.repr,Int> {
+    return v.add(v.int(1),v.int(2))
+}
+
+
+///Witness for the Maybe
+public final class ForRK {}
+
+///Higher Kinded Type alias to improve readability over `Kind<ForRK, A>`.
+public typealias RKOf<A> = Kind<ForRK, A>
+
+/// The wrapped class
+public struct R<a> {
+    let unR: a
+    
+    //Extension..
+    func k() -> RK<a> {
+        return RK(self)
+    }
+}
+
+/// RK is a Higher Kinded Type wrapper over `R` data type.
+public final class RK<A>: RKOf<A> {
+    /// Wrapped `A` value.
+    public let value: R<A>
+    
+    /// Safe downcast.
+    ///
+    /// - Parameter value: Value in the higher-kind form.
+    /// - Returns: Value cast to MaybeK.
+    public static func fix(_ value: RKOf<A>) -> RK<A> {
+        return value as! RK<A>
+    }
+    
+    /// Initializes a value of this type with the underlying `Maybe` value.
+    ///
+    /// - Parameter value: Wrapped `Maybe` value.
+    public init(_ value: R<A>) {
+        self.value = value
+    }
+}
+
+extension ForRK {
+    public static func pure<A>(_ a: A) -> Kind<ForRK, A> {
+        return R<A>(unR: a).k()
+    }
+}
+    
+public postfix func ^<A>(_ value: RKOf<A>) -> RK<A> {
+    return RK.fix(value)
+}
+
+class SymanticsR<RKs: Symantics>: Symantics {
+    typealias repr = RKs.repr
+    
+    //Value to higher kind
+    func int(_ x: Int) -> Kind<RKs, Int> {
+//        let rInt = R<Int>(unR: x)
+//        let rkInt = RK<Int>(rInt)
+        return RKs.pure(x)
+    }
+    
+    func add(_ i1: Kind<R, Int>, _ i2: Kind<R, Int>) -> Kind<R, Int> {
+        <#code#>
+    }
+    
+    func lam<a, b>(_ i1: (Kind<R, a>) -> Kind<R, b>) -> Kind<R, (a) -> b> {
+        <#code#>
+    }
+    
+    func app<a, b>(_ f1: Kind<R, (a) -> b>, _ i2: Kind<R, a>) -> (Kind<R, a>) -> Kind<R, b> {
+        <#code#>
+    }
+}
+
 
 func sum(_ array: [Int]) -> Int {
     guard array.first != nil else { return 0 }

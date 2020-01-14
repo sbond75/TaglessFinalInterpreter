@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "71BB21ECEE2552EEC3B82304470F2D78"
-               BuildableName = "Bow.framework"
+               BuildableName = "libBow.a"
                BlueprintName = "Bow"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>

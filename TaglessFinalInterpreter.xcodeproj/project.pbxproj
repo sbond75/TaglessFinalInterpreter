@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		08606CA2A2C5E617A69E0439 /* Pods_TaglessFinalInterpreter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE1F1BEFCED95F20DBB95DC /* Pods_TaglessFinalInterpreter.framework */; };
 		1ADB4A381E8C88EC000F8896 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB4A371E8C88EC000F8896 /* main.swift */; };
+		C9DA0270612DFB9FB334706E /* libPods-TaglessFinalInterpreter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0BC7A46A4776CB853BF2CD2 /* libPods-TaglessFinalInterpreter.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,9 +27,9 @@
 		1ADB4A341E8C88EC000F8896 /* TaglessFinalInterpreter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TaglessFinalInterpreter; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ADB4A371E8C88EC000F8896 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		1ADB4A3E1E8C8C09000F8896 /* TaglessFinalInterpreter.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = TaglessFinalInterpreter.playground; path = TaglessFinalInterpreter/TaglessFinalInterpreter.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		1FE1F1BEFCED95F20DBB95DC /* Pods_TaglessFinalInterpreter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TaglessFinalInterpreter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB1F37034B7819A9DBAFA39E /* Pods-TaglessFinalInterpreter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaglessFinalInterpreter.release.xcconfig"; path = "Target Support Files/Pods-TaglessFinalInterpreter/Pods-TaglessFinalInterpreter.release.xcconfig"; sourceTree = "<group>"; };
 		BFBB9C1D884EC6D1DE67EB2B /* Pods-TaglessFinalInterpreter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TaglessFinalInterpreter.debug.xcconfig"; path = "Target Support Files/Pods-TaglessFinalInterpreter/Pods-TaglessFinalInterpreter.debug.xcconfig"; sourceTree = "<group>"; };
+		C0BC7A46A4776CB853BF2CD2 /* libPods-TaglessFinalInterpreter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TaglessFinalInterpreter.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				08606CA2A2C5E617A69E0439 /* Pods_TaglessFinalInterpreter.framework in Frameworks */,
+				C9DA0270612DFB9FB334706E /* libPods-TaglessFinalInterpreter.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +83,7 @@
 		93A3B4AE1D2F620FB53F5383 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1FE1F1BEFCED95F20DBB95DC /* Pods_TaglessFinalInterpreter.framework */,
+				C0BC7A46A4776CB853BF2CD2 /* libPods-TaglessFinalInterpreter.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -132,6 +132,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 1ADB4A2B1E8C88EC000F8896;

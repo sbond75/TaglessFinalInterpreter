@@ -1,16 +1,20 @@
 PODS:
   - Bow (0.5.0)
+  - RxSwift (5.0.1)
 
 DEPENDENCIES:
   - Bow (~> 0.5.0)
+  - RxSwift (~> 5)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Bow
+    - RxSwift
 
 SPEC CHECKSUMS:
   Bow: 74386868e5d013de697c1996b0f3f02081087063
+  RxSwift: e2dc62b366a3adf6a0be44ba9f405efd4c94e0c4
 
-PODFILE CHECKSUM: 110632afbc01fc945677d4b7321a9688e2f6e68e
+PODFILE CHECKSUM: d14ace1fc05b42363c2cb0fdabc22998963f0609
 
 COCOAPODS: 1.7.1

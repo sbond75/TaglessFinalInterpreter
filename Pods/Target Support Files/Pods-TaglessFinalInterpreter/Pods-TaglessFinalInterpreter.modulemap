@@ -1,4 +1,4 @@
-framework module Pods_TaglessFinalInterpreter {
+module Pods_TaglessFinalInterpreter {
   umbrella header "Pods-TaglessFinalInterpreter-umbrella.h"
 
   export *

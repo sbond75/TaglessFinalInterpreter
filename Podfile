@@ -3,9 +3,10 @@
 
 target 'TaglessFinalInterpreter' do
   # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
+  #use_frameworks!
 
   # Pods for TaglessFinalInterpreter
   pod "Bow",                 "~>0.5.0" #"~>0.7.0"
+  pod 'RxSwift', '~> 5'
 
 end

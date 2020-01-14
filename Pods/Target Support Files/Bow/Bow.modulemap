@@ -1,4 +1,4 @@
-framework module Bow {
+module Bow {
   umbrella header "Bow-umbrella.h"
 
   export *
