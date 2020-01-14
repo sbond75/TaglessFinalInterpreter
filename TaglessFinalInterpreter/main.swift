@@ -569,18 +569,13 @@ let a = 1; //(no-op)
 protocol Symantics {
     associatedtype repr
 
-    func int(_ i: Int) -> Kind<repr, Int>
-    func add(_ i1: Kind<repr, Int>, _ i2: Kind<repr, Int>) -> Kind<repr, Int>
+    func int(_: Int) -> Kind<repr, Int>
+    func add(_: Kind<repr, Int>) -> (Kind<repr, Int>) -> Kind<repr, Int>
     // lam :: (repr a→repr b)→repr (a→b)
-    func lam<a, b>(_ i1: (Kind<repr, a>) -> Kind<repr, b>) -> Kind<repr, (a) -> b>
+    func lam<a, b>(_: @escaping (Kind<repr, a>) -> Kind<repr, b>) -> Kind<repr, (a) -> b>
     // app :: repr (a→b)→repr a→repr b
-    func app<a, b>(_ f1: Kind<repr, (a) -> b>, _ i2: Kind<repr, a>) -> (Kind<repr, a>) -> Kind<repr, b>
+    func app<a, b>(_: Kind<repr, (a) -> b>) -> (Kind<repr, a>) -> Kind<repr, b>
 }
-
-func th1<E: Symantics>(_ v: E) -> Kind<E.repr,Int> {
-    return v.add(v.int(1),v.int(2))
-}
-
 
 ///Witness for the Maybe
 public final class ForRK {}
@@ -629,29 +624,89 @@ public postfix func ^<A>(_ value: RKOf<A>) -> RK<A> {
     return RK.fix(value)
 }
 
-class SymanticsR<RKs: Symantics>: Symantics {
-    typealias repr = RKs.repr
+//class SymanticsR<RKs: Symantics>: Symantics {
+//    typealias repr = RKs.repr
+//
+//    //Value to higher kind
+//    func int(_ x: Int) -> Kind<RKs, Int> {
+////        let rInt = R<Int>(unR: x)
+////        let rkInt = RK<Int>(rInt)
+//        return RKs.pure(x)
+//    }
+//
+//    func add(_ i1: Kind<R, Int>, _ i2: Kind<R, Int>) -> Kind<R, Int> {
+//        <#code#>
+//    }
+//
+//    func lam<a, b>(_ i1: (Kind<R, a>) -> Kind<R, b>) -> Kind<R, (a) -> b> {
+//        <#code#>
+//    }
+//
+//    func app<a, b>(_ f1: Kind<R, (a) -> b>, _ i2: Kind<R, a>) -> (Kind<R, a>) -> Kind<R, b> {
+//        <#code#>
+//    }
+//}
+
+
+class SymanticsR: Symantics {
     
-    //Value to higher kind
-    func int(_ x: Int) -> Kind<RKs, Int> {
-//        let rInt = R<Int>(unR: x)
-//        let rkInt = RK<Int>(rInt)
-        return RKs.pure(x)
+    typealias repr = ForId
+    func int(_ i: Int) -> Kind<ForId, Int> {
+        return Id(i)
     }
     
-    func add(_ i1: Kind<R, Int>, _ i2: Kind<R, Int>) -> Kind<R, Int> {
-        <#code#>
+    func add(_ i1: Kind<ForId, Int>) -> (Kind<ForId, Int>) -> Kind<ForId, Int> {
+        return {i2 in Id(i1^.value + i2^.value) }
     }
     
-    func lam<a, b>(_ i1: (Kind<R, a>) -> Kind<R, b>) -> Kind<R, (a) -> b> {
-        <#code#>
+    func lam<a, b>(_ f: @escaping (Kind<ForId, a>) -> Kind<ForId, b>) -> Kind<ForId, (a) -> b> {
+        return Id({ i in f(Id(i))^.value })
     }
     
-    func app<a, b>(_ f1: Kind<R, (a) -> b>, _ i2: Kind<R, a>) -> (Kind<R, a>) -> Kind<R, b> {
-        <#code#>
+    func app<a, b>(_ e1: Kind<ForId, (a) -> b>) -> (Kind<ForId, a>) -> Kind<ForId, b> {
+        return { e2 in Id((e1^.value)(e2^.value)) }
     }
 }
 
+
+
+func th1<E: Symantics>(_ v: E) -> Kind<E.repr,Int> {
+    return v.add(v.int(1))(v.int(2))
+}
+
+func th2<E: Symantics>(_ v: E) -> Kind<E.repr,(Int) -> Int> {
+    return v.lam({ x in v.add(x)(x)})
+}
+
+//Made it impossible to apply int to int
+//func illegal1<E: Symantics>(_ v: E) -> Kind<E.repr,Int> {
+//    return v.app(v.int(1))(v.int(2))
+//}
+
+func identity<E: Symantics, T>(_ v: E) -> Kind<E.repr, (T) -> T> {
+    // illegal2 = \x -> x x
+    return v.lam{ x in x }
+}
+
+func idx<E: Symantics>(_ v: E) -> Kind<E.repr, Int> {
+    return v.app(v.app(identity(v))(identity(v)))(v.int(7))
+}
+/*
+ val: 5
+ str: (8 + (- (1 + 2)))
+ tree: Node 'Add' [Node 'Lit' [Leaf '8'], Node 'Neg' [Node 'Add' [Node 'Lit' [Leaf '1'], Node 'Lit' [Leaf '2']]]]
+ (lldb) expr idx(SymanticsR())^.value
+ (Int) $R0 = 7
+ (lldb)
+ */
+
+
+//TODO: open issue on apple swift github, clean it up for a minimal viable example, maybe with Bow
+//BREAKS SWIFT but should work:
+//func th3<E: Symantics>(_ v: E) -> Kind<E.repr, ((Int) -> Int) -> Int> {
+//    // th3 =   lam (\x -> add (app x (int 1)) (int 2))
+//    return v.lam({x in v.add(v.app(x)(v.int(1)))(v.int(2))})
+//}
 
 func sum(_ array: [Int]) -> Int {
     guard array.first != nil else { return 0 }
