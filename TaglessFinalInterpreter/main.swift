@@ -581,6 +581,7 @@ protocol Symantics {
     func lam<a, b>(_: @escaping (Kind<repr, a>) -> Kind<repr, b>) -> Kind<repr, (a) -> b>
     // app :: repr (a→b)→repr a→repr b
     //Takes a function in our object language, applies it (because it accepts an argument (Kind<repr, a>)), and returns the `b` value in object language.
+    //Or, because of currying, you can think of it as: returning the Swift function that was wrapped in the object language.
     func app<a, b>(_: Kind<repr, (a) -> b>) -> (Kind<repr, a>) -> Kind<repr, b>
     
     //Note: lam and app undo each other (they are duals)
@@ -588,10 +589,13 @@ protocol Symantics {
     
     //Means pass the function to itself an infinite number of times: f(f(f(f(f...())))))) to allow for recursion.
     //Takes a function in our meta-language and "fixes it": passes it to itself once.
+    //To call a lambda within itself, you must `fix` it. That is how you do recursion: the fixed-point operator (the `fix` function).
     func fix<a>
-    (_: @escaping (@escaping (Kind<repr, a>) -> Kind<repr, a>)
-                          -> (Kind<repr, a>) -> Kind<repr, a>)
-    -> (Kind<repr, (a) -> a>)
+    //fact and n are a Factorial example:
+    (_: @escaping ((Kind<repr, (a) -> a   /*<--fact*/>)
+                 -> Kind<repr, (a /*n*/) -> a>) //the function body of factorial
+        ) //The function to fix
+    -> (Kind<repr, (a) -> a>) //Fixed function (takes n and gives n!)
     //Takes function from object-representation of Bool to
     /*
      
@@ -690,14 +694,14 @@ public func fix<A>(_ f : @escaping (((A) -> A) -> (A) -> A)) -> (A) -> A {
 }
 
 class SymanticsR: Symantics {
+    func fix<a>(_ f: @escaping ((Kind<ForId, (a) -> a>) -> Kind<ForId, (a) -> a>)) -> (Kind<ForId, (a) -> a>) {
+        return fix(f)
+    }
+    
     func leq(_ x: Kind<ForId, Int>) -> (Kind<ForId, Int>) -> Kind<ForId, Bool> {
         return { y /*: Kind<ForId, Int>*/ in
             Id(x^.value <= y^.value) //^ unwraps, Id wraps
         }
-    }
-    
-    func fix<a>(_ f: @escaping (@escaping (Kind<ForId, a>) -> Kind<ForId, a>) -> (Kind<ForId, a>) -> Kind<ForId, a>) -> (Kind<ForId, (a) -> a>) {
-        return lam(TaglessFinalInterpreter.fix(f))
     }
     
     func bool(_ b: Bool) -> Kind<ForId, Bool> {
@@ -761,14 +765,14 @@ func fact<E: Symantics>(_ v: E) -> Kind<E.repr, (Int) -> Int> {
 //
 //        }}
     
-    return v.fix({(fac: (Kind<E.repr, (Int) -> Int>) -> (Kind<E.repr, (Int) -> Int>)
-                  -> Kind<E.repr, (Int) -> Int>)
-                    -> (Kind<E.repr, (Int) -> Int>) in
-        v.lam({ (n: Kind<E.repr, Int>) -> Kind<E.repr, Int> in
-            v.if_(v.leq(n)(v.int(1))) //n < 1
+    return v.fix({ (fac: Kind<E.repr, (Int) -> Int   /*<--fact*/>)
+                            -> Kind<E.repr, (Int /*n*/) -> Int>
+        in //fac
+        v.lam({ (n : Kind<E.repr, Int>) -> Kind<E.repr, Int> in //up to here is good
+            v.if_<Kind<E.repr, Int>>(v.leq(n)(v.int(1))) as! (Kind<Any, Bool>) //n < 1
                   (v.int(1)) //1 (consequence)
                   (v.mul(n)(
-                    v.app(fac)(v.add(n)(v.int(-1)))
+                    v.app(fac)(v.add(n)(v.int(-1))) //app returns `(Kind<repr, `a` is `(Int) -> Int`>) -> Kind<repr, `b` is `(Int) -> Int`)>`
                   ))
         })
     })
