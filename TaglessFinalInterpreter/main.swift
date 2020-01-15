@@ -569,12 +569,51 @@ let a = 1; //(no-op)
 protocol Symantics {
     associatedtype repr
 
+    //Takes an int from our meta language (Swift) and injects it into our object language (target language)
     func int(_: Int) -> Kind<repr, Int>
+    func bool(_: Bool) -> Kind<repr, Bool>
+    //A function in our object language: takes two ints in object language and produces int in object language
     func add(_: Kind<repr, Int>) -> (Kind<repr, Int>) -> Kind<repr, Int>
+    func mul(_: Kind<repr, Int>) -> (Kind<repr, Int>) -> Kind<repr, Int>
     // lam :: (repr a→repr b)→repr (a→b)
+    //Kind<repr, a> : representation of `a` in our meta-language.
+    //Receives a Swift lambda in meta language that takes value `a` from object language and returns value `b`. It returns this lambda `(a) -> b` as being ("wrapped") in our object language.
     func lam<a, b>(_: @escaping (Kind<repr, a>) -> Kind<repr, b>) -> Kind<repr, (a) -> b>
     // app :: repr (a→b)→repr a→repr b
+    //Takes a function in our object language, applies it (because it accepts an argument (Kind<repr, a>)), and returns the `b` value in object language.
     func app<a, b>(_: Kind<repr, (a) -> b>) -> (Kind<repr, a>) -> Kind<repr, b>
+    
+    //Note: lam and app undo each other (they are duals)
+    
+    
+    //Means pass the function to itself an infinite number of times: f(f(f(f(f...())))))) to allow for recursion.
+    //Takes a function in our meta-language and "fixes it": passes it to itself once.
+    func fix<a>
+    (_: @escaping (@escaping (Kind<repr, a>) -> Kind<repr, a>)
+                          -> (Kind<repr, a>) -> Kind<repr, a>)
+    -> (Kind<repr, (a) -> a>)
+    //Takes function from object-representation of Bool to
+    /*
+     
+     instead of: if (condition) {
+        body
+     }
+     
+     we have:
+     if <pred> <conseq> <alt>
+        //predicate, consequence, alternative.
+     
+     haskell program:
+     factorial n = if n <= 0 then 1 else n * factorial (n - 1)
+     
+     <pred> <conseq> <alt> :
+     n <= 0           1          n * factorial (n - 1)
+     */
+    func if_<a>(_: Kind<repr, Bool> /*condition (an argument to the `if`)*/)
+        -> (Kind<repr, a>)/*consequence. is an expression of type a. (an argument to the `if`)*/
+        -> (Kind<repr, a>) /*alternative (an argument to the `if`)*/
+        -> Kind<repr, a> /*the result of the if; what it decided to give back*/
+    func leq(_: Kind<repr, Int>) -> (Kind<repr, Int>) -> Kind<repr, Bool>
 }
 
 ///Witness for the Maybe
@@ -646,9 +685,31 @@ public postfix func ^<A>(_ value: RKOf<A>) -> RK<A> {
 //        <#code#>
 //    }
 //}
-
+public func fix<A>(_ f : @escaping (((A) -> A) -> (A) -> A)) -> (A) -> A {
+    return { x in f(fix(f))(x) }
+}
 
 class SymanticsR: Symantics {
+    func leq(_ x: Kind<ForId, Int>) -> (Kind<ForId, Int>) -> Kind<ForId, Bool> {
+        return { y /*: Kind<ForId, Int>*/ in
+            Id(x^.value <= y^.value) //^ unwraps, Id wraps
+        }
+    }
+    
+    func fix<a>(_ f: @escaping (@escaping (Kind<ForId, a>) -> Kind<ForId, a>) -> (Kind<ForId, a>) -> Kind<ForId, a>) -> (Kind<ForId, (a) -> a>) {
+        return lam(TaglessFinalInterpreter.fix(f))
+    }
+    
+    func bool(_ b: Bool) -> Kind<ForId, Bool> {
+        return Id(b)
+        //Id<A> lifts an int into Kind<ForId, A>
+    }
+    
+    
+    func if_<a>(_ p: Kind<ForId, Bool>) -> (Kind<ForId, a>) -> (Kind<ForId, a>) -> Kind<ForId, a> {
+        return { c in { a in p^.value ? c : a }}
+    }
+    
     
     typealias repr = ForId
     func int(_ i: Int) -> Kind<ForId, Int> {
@@ -657,6 +718,10 @@ class SymanticsR: Symantics {
     
     func add(_ i1: Kind<ForId, Int>) -> (Kind<ForId, Int>) -> Kind<ForId, Int> {
         return {i2 in Id(i1^.value + i2^.value) }
+    }
+    
+    func mul(_ i1: Kind<ForId, Int>) -> (Kind<ForId, Int>) -> Kind<ForId, Int> {
+        return {i2 in Id(i1^.value * i2^.value) }
     }
     
     func lam<a, b>(_ f: @escaping (Kind<ForId, a>) -> Kind<ForId, b>) -> Kind<ForId, (a) -> b> {
@@ -678,6 +743,40 @@ func th2<E: Symantics>(_ v: E) -> Kind<E.repr,(Int) -> Int> {
     return v.lam({ x in v.add(x)(x)})
 }
 
+//Wrapping up a function that is factorial in the object language.
+//(Returns a function in the object language.)
+func fact<E: Symantics>(_ v: E) -> Kind<E.repr, (Int) -> Int> {
+    /*
+     fact :: Symantics repr => repr (Int -> Int)
+     fact = fix (\fac -> lam (\n -> if (len n (int 1))
+                                       (int 1)
+                                       (mul n (app fac (add n (int (-1)))))))
+ */
+    
+//    let f : (@escaping (Kind<E.repr, Int>) -> Kind<E.repr, Int>) -> (Kind<E.repr, Int>) -> Kind<E.repr, Int> =
+//    { fac in {x in
+//        v.if_<Int>(v.leq(x)(v.int(0))) as! (Kind<E.repr, Bool>)
+//             (v.int(1))
+//             (v.mul(x)(fac(v.add(x)(v.int(-1)))))
+//
+//        }}
+    
+    return v.fix({(fac: (Kind<E.repr, (Int) -> Int>) -> (Kind<E.repr, (Int) -> Int>)
+                  -> Kind<E.repr, (Int) -> Int>)
+                    -> (Kind<E.repr, (Int) -> Int>) in
+        v.lam({ (n: Kind<E.repr, Int>) -> Kind<E.repr, Int> in
+            v.if_(v.leq(n)(v.int(1))) //n < 1
+                  (v.int(1)) //1 (consequence)
+                  (v.mul(n)(
+                    v.app(fac)(v.add(n)(v.int(-1)))
+                  ))
+        })
+    })
+
+//    { fac in
+//        return v.lam({x in v.if_(v.leq(x)(v.int(0)))(v.int(1))(v.mul(x)(v.app(fac)(v.add(x)(v.int(-1)))))})}
+//    return v.lam(fix(v.lam(f)))
+}
 //Made it impossible to apply int to int
 //func illegal1<E: Symantics>(_ v: E) -> Kind<E.repr,Int> {
 //    return v.app(v.int(1))(v.int(2))
