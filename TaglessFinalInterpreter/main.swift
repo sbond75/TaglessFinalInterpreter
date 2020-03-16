@@ -749,38 +749,38 @@ func th2<E: Symantics>(_ v: E) -> Kind<E.repr,(Int) -> Int> {
 
 //Wrapping up a function that is factorial in the object language.
 //(Returns a function in the object language.)
-func fact<E: Symantics>(_ v: E) -> Kind<E.repr, (Int) -> Int> {
-    /*
-     fact :: Symantics repr => repr (Int -> Int)
-     fact = fix (\fac -> lam (\n -> if (len n (int 1))
-                                       (int 1)
-                                       (mul n (app fac (add n (int (-1)))))))
- */
-    
-//    let f : (@escaping (Kind<E.repr, Int>) -> Kind<E.repr, Int>) -> (Kind<E.repr, Int>) -> Kind<E.repr, Int> =
-//    { fac in {x in
-//        v.if_<Int>(v.leq(x)(v.int(0))) as! (Kind<E.repr, Bool>)
-//             (v.int(1))
-//             (v.mul(x)(fac(v.add(x)(v.int(-1)))))
+//func fact<E: Symantics>(_ v: E) -> Kind<E.repr, (Int) -> Int> {
+//    /*
+//     fact :: Symantics repr => repr (Int -> Int)
+//     fact = fix (\fac -> lam (\n -> if (len n (int 1))
+//                                       (int 1)
+//                                       (mul n (app fac (add n (int (-1)))))))
+// */
 //
-//        }}
-    
-    return v.fix({ (fac: Kind<E.repr, (Int) -> Int   /*<--fact*/>)
-                            -> Kind<E.repr, (Int /*n*/) -> Int>
-        in //fac
-        v.lam({ (n : Kind<E.repr, Int>) -> Kind<E.repr, Int> in //up to here is good
-            v.if_<Kind<E.repr, Int>>(v.leq(n)(v.int(1))) as! (Kind<Any, Bool>) //n < 1
-                  (v.int(1)) //1 (consequence)
-                  (v.mul(n)(
-                    v.app(fac)(v.add(n)(v.int(-1))) //app returns `(Kind<repr, `a` is `(Int) -> Int`>) -> Kind<repr, `b` is `(Int) -> Int`)>`
-                  ))
-        })
-    })
-
-//    { fac in
-//        return v.lam({x in v.if_(v.leq(x)(v.int(0)))(v.int(1))(v.mul(x)(v.app(fac)(v.add(x)(v.int(-1)))))})}
-//    return v.lam(fix(v.lam(f)))
-}
+////    let f : (@escaping (Kind<E.repr, Int>) -> Kind<E.repr, Int>) -> (Kind<E.repr, Int>) -> Kind<E.repr, Int> =
+////    { fac in {x in
+////        v.if_<Int>(v.leq(x)(v.int(0))) as! (Kind<E.repr, Bool>)
+////             (v.int(1))
+////             (v.mul(x)(fac(v.add(x)(v.int(-1)))))
+////
+////        }}
+//
+//    return v.fix({ (fac: Kind<E.repr, (Int) -> Int   /*<--fact*/>)
+//                            -> Kind<E.repr, (Int /*n*/) -> Int>
+//        in //fac
+//        v.lam({ (n : Kind<E.repr, Int>) -> Kind<E.repr, Int> in //up to here is good
+//            v.if_<Kind<E.repr, Int>>(v.leq(n)(v.int(1))) as! (Kind<Any, Bool>) //n < 1
+//                  (v.int(1)) //1 (consequence)
+//                  (v.mul(n)(
+//                    v.app(fac)(v.add(n)(v.int(-1))) //app returns `(Kind<repr, `a` is `(Int) -> Int`>) -> Kind<repr, `b` is `(Int) -> Int`)>`
+//                  ))
+//        })
+//    })
+//
+////    { fac in
+////        return v.lam({x in v.if_(v.leq(x)(v.int(0)))(v.int(1))(v.mul(x)(v.app(fac)(v.add(x)(v.int(-1)))))})}
+////    return v.lam(fix(v.lam(f)))
+//}
 //Made it impossible to apply int to int
 //func illegal1<E: Symantics>(_ v: E) -> Kind<E.repr,Int> {
 //    return v.app(v.int(1))(v.int(2))
